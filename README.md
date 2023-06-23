@@ -9,3 +9,8 @@ https://wiki.crosswire.org/Module_Development_Collaboration
 
 https://bibledit.org/
 
+Crosswire's build environment and tools:
+
+https://github.com/refdoc/Module-tools
+
+
