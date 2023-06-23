@@ -1,0 +1,68 @@
+u2o.py issues when using TKL text
+u2o.py 0.5, commit 753f4d147a5a65103f54cf428ee7e7530be224e2
+
+
+Sept 15
+------------------------------------------------------------------------
+At issue is the post processing, which is still under development. It is
+intended to slide <chapter>, <verse>, <verse/>, and <chapter/> tags to 
+their final OSIS positions.
+
+Verse and chapter tags should be slid up or down until:
+
+1) all chapter related text is within the chapter's start and end tags
+and all verse related text is within the related verse's start and end
+tags. As mentioned above, this includes all title and section tags,
+which should also be within the related verse's tags, unless they relate
+to the introduction text rather than to the verse text.
+
+2) there are no "dangling" start tags at the end of a verse, and no
+dangling end tags at the start of a verse. By "dangling" meaning tags
+which are outside the verse that their own text nodes are in. In other
+words a <l> tag is dangling if it is at the end of verse 3, but its text
+is in verse 4.
+
+An example 
+is the final placement of these tags in the following markup:
+
+Given this USFM from TKL Prov 2:1-2:
+
+\cl 2-nji bap
+\c 2
+\q1
+\v 1 Oglum, meniň sözümi kabul edip,
+\q2 buýrugymy kalbyňda saklasaň,
+\b
+\q1
+\v 2 danalyga gulak asyp,
+\q2 düşünjä ýüregiňi berseň,
+\b
+\q1
+
+u2o.py renders it as:
+
+<!-- cl -->
+<title type="x-chapterLabel" short="2-nji bap"/>
+<verse eID="Prov.1.33"/>
+<chapter eID="Prov.1"/>
+<chapter osisID="Prov.2" sID="Prov.2" n="2"/>
+<lg>
+  <l level="1"><verse osisID="Prov.2.1" sID="Prov.2.1" n="1"/>Oglum, meniň sözümi kabul edip, </l>
+  <l level="2">buýrugymy kalbyňda saklasaň, <verse eID="Prov.2.1"/></l>
+  <lb type="x-p"/>
+  <l level="1"><verse osisID="Prov.2.2" sID="Prov.2.2" n="2"/>danalyga gulak asyp, </l>
+  <l level="2">düşünjä ýüregiňi berseň, <verse eID="Prov.2.2"/></l>
+  <lb type="x-p"/>
+
+usfm2osis.py renders it as:
+
+<verse eID="Prov.1.33"/>
+<chapter eID="Prov.1"/>
+<chapter osisID="Prov.2" sID="Prov.2"/>
+<verse osisID="Prov.2.1" sID="Prov.2.1"/><title type="x-chapterLabel">2-nji bap</title><lg>
+<l level="1" subType="x-to-next-level">Oglum, meniň sözümi kabul edip,</l>
+<l level="2">buýrugymy kalbyňda saklasaň,</l></lg><lb/><verse eID="Prov.2.1"/>
+<verse osisID="Prov.2.2" sID="Prov.2.2"/><lg>
+<l level="1" subType="x-to-next-level">danalyga gulak asyp,</l>
+<l level="2">düşünjä ýüregiňi berseň,</l></lg><lb/><verse eID="Prov.2.2"/>
+
